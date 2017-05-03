@@ -14,22 +14,30 @@ colors = np.hstack([colors] * 20)
 
 num = int(sys.argv[1])
 
-data = np.genfromtxt(str(num) + ".csv", delimiter=',')
-#data = StandardScaler().fit_transform(data)
+output = None
+for i in range(1, num + 1):
+	data = np.genfromtxt(str(i) + ".csv", delimiter=',')
+	#data = StandardScaler().fit_transform(data)
+	
+	#bandwidth = cluster.estimate_bandwidth(data, quantile=0.3)
+	connectivity = kneighbors_graph(data, n_neighbors=7, include_self=False)
+	connectivity = .5 * (connectivity + connectivity.T)
+	
+	data_clustered = cluster.AgglomerativeClustering(linkage="complete", affinity="manhattan", n_clusters=7, connectivity=connectivity)
+	
+	data_clustered.fit(data)
+	y_pred = data_clustered.labels_.astype(np.int)
+	if (output == None):
+		output = np.array([y_pred])
+	else:
+		output = np.append(output, np.array([y_pred]), axis=0)
 
-#bandwidth = cluster.estimate_bandwidth(data, quantile=0.3)
-connectivity = kneighbors_graph(data, n_neighbors=7, include_self=False)
-connectivity = .5 * (connectivity + connectivity.T)
+np.savetxt("clusters.csv", output, delimiter=',')
 
-data_clustered = cluster.AgglomerativeClustering(linkage="complete", affinity="manhattan", n_clusters=7, connectivity=connectivity)
 
-data_clustered.fit(data)
-y_pred = data_clustered.labels_.astype(np.int)
-np.savetxt(str(num) + "_clusters.csv", y_pred, delimiter=',')
-
-print(y_pred)
-plt.hist(y_pred)
+#print(y_pred)
+#plt.hist(y_pred)
 
 #plt.scatter(data[:, 0], data[:, 1], color = colors[y_pred].tolist(), s=10)
 
-plt.savefig(str(num) + "_hist.png", dpi=200)
+#plt.savefig(str(num) + "_hist.png", dpi=200)
