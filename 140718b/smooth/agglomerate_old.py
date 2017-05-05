@@ -27,32 +27,11 @@ for i in range(1, num + 1):
 	
 	data_clustered.fit(data)
 	y_pred = data_clustered.labels_.astype(np.int)
-	max = np.amax(y_pred) + 1
-	#if (i == 5):
-	#	print(max)
-	#	print(y_pred)
-	for j in range(0, max):
-		y_pred[y_pred == j] = int(max + j)
-	
-	#if (i == 5): # testing leave me alone
-	#	print(y_pred)
-	j = 0
-	for n in range(0, len(y_pred)):
-		if (y_pred[n] >= max):
-			y_pred[y_pred == y_pred[n]] = j
-			j = j + 1
-		#y_pred[y_pred == y_pred[j]] = j
-	#print(j)
-	#if (i == 5):
-	#	print(y_pred)
 	if (output == None):
 		output = np.array([y_pred])
 	else:
 		output = np.append(output, np.array([y_pred]), axis=0)
-	print(i)
-np.savetxt("looming_clusters.csv", output[::3], delimiter=',')
-np.savetxt("flash_clusters.csv", output[1::3], delimiter=',')
-np.savetxt("scrambled_clusters.csv", output[2::3], delimiter=',')
+
 np.savetxt("clusters.csv", output, delimiter=',')
 
 

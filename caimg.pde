@@ -31,6 +31,10 @@ class Tuple<T> {
 
 color graphBG = color(160);
 
+Table clusters;
+int maxClusters = 7;
+color[] clusterColors = { color(130, 43, 102), color(170, 118, 57), color(40, 84, 108), color(131, 161, 54), color(78, 146, 49), color(138, 46, 96), color(255) };
+
 int maxX = 0;
 int maxY = 0;
 float xScale;
@@ -83,6 +87,7 @@ void setup() {
 void loadData() {
   graph = false;
   String temp[] = loadStrings(dataNames[dataIdx] + "/xy.txt");
+  if (dataNames[dataIdx] == "140718b") clusters = loadTable(dataNames[dataIdx] + "/" + "clusters.csv", "csv");
   xy = new Tuple[temp.length];
   enabled = new boolean[temp.length];
   maxX = 0;
@@ -248,8 +253,13 @@ void draw() {
     } else {
       temp = ((double)presentations[present].getRow((int)frameIdx).getInt(i + 2) - minFluor)/(maxFluor - minFluor);
       //println(temp);
-      stroke((int)(255 * temp));
-      fill((int)(255*temp));
+      if (dataNames[dataIdx] == "140718b") {
+        fill(color(clusterColors[clusters.getInt(present, i)]), (int)(255*temp));
+        stroke(color(clusterColors[clusters.getInt(present, i)]), (int)(255*temp));
+      } else {
+        fill((int)(255*temp));
+        stroke((int)(255 * temp));
+      }
     }
     ellipse(xy[i].x * xScale, xy[i].y * yScale, (int)(temp * maxWidth), (int)(temp * maxWidth));
     //point(xy[i].x * xScale, xy[i].y * yScale);
